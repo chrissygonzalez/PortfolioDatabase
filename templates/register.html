@@ -1,15 +1,51 @@
 <html>
 <head>
 </head>
+<style>
+	.hidden {
+		display: none;
+	}
+</style>
 <body>
+	<h1>Register for an account</h1>
 <form action="/registerAuth" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="submit" value = Register />
+	<input type="radio" id="register-person" name="account-type" value="person" checked onchange="toggleMessage(this.value)">
+	<label for="register-person">Person</label><br>
+
+	<input type="radio" id="register-org" name="account-type" value="org" onchange="toggleMessage(this.value)">
+	<label for="register-org">Organization</label>
+
+	<div>
+		<input type="text" name="username" placeholder="username" required/> </br>
+		<input type="password"name="password" placeholder="password" required/></br>
+	</div>
+	<div class="person">
+		<input type="text" name="firstname" placeholder="firstname"/> </br>
+		<input type="text" name="lastname" placeholder="lastname"/> </br>
+	</div>
+	<div class="organization hidden">
+		<input type="text" name="title" placeholder="title"/> </br>
+	</div>
+
+	<input type="submit" value=Register />
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
 	{% endif %}
 </form>
 <a href="/">Go back</a>
+
+<script>
+	const personForm = document.querySelector('.person');
+	const orgForm = document.querySelector('.organization');
+  function toggleMessage(val) {
+	if(val==='person'){
+		personForm.classList.remove('hidden');
+		orgForm.classList.add('hidden');
+	} else if(val=='org'){
+		personForm.classList.add('hidden');
+		orgForm.classList.remove('hidden');
+	}
+  }
+</script>
 </body>
 </html>

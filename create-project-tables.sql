@@ -55,11 +55,10 @@ create table following (
 );
 
 create table organization (
-	org_id		int,
+	org_id		int generated always as identity primary key,
 	account_id	int not null unique,
 	title		varchar(20),
 	prof_id	int,
-primary key 	(org_id),
 foreign key (account_id) references account,
 foreign key	(prof_id) references profile
 );
@@ -171,7 +170,7 @@ create table post_comment (
 	foreign key 	(responder_id) references person
 );
 
-create type reaction_value as enum ('dislike', 'none', 'like');
+-- create type reaction_value as enum ('dislike', 'none', 'like');
 
 create table post_reaction (
 	post_id	int,

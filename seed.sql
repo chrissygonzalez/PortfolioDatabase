@@ -66,10 +66,9 @@ insert into following (person_id, follows_person_id) values
 (5, 1), (5, 3);
 
 -- ---------- organizations ----------
--- org_id is not an identity column, so it's set explicitly
-insert into organization (org_id, account_id, title, prof_id) values
-(1, 6, 'Code Club',       6),
-(2, 7, 'Greenhouse Co-op', 7);
+insert into organization (account_id, title, prof_id) values
+(6, 'Code Club',        6),
+(7, 'Greenhouse Co-op', 7);
 
 insert into org_address (org_id, street_num, street_name, city, country, postal) values
 (1, '100', 'Main St',  'Chicago',  'USA', '60602'),

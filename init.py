@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, session, url_for, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
+from psycopg2 import IntegrityError
 from psycopg2.extras import RealDictCursor
 
 #Initialize the app from Flask
@@ -63,27 +64,48 @@ def registerAuth():
 	#grabs information from the forms
 	username = request.form['username']
 	password = request.form['password']
+	account_type = request.form['account-type']
 
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
 	query = 'SELECT * FROM account WHERE username = %s'
 	cursor.execute(query, (username,))
-	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	error = None
-	if(data):
+
+	if(cursor.fetchone()):
 		#If the previous query returns data, then user exists
-		error = "This user already exists"
-		return render_template('register.html', error = error)
-	else:
+		cursor.close()
+		return render_template('register.html', error="This user already exists")
+
+	try:
 		password_hash = generate_password_hash(password)
 		ins = 'INSERT INTO account (username, password_hash) VALUES (%s, %s) RETURNING account_id'
 		cursor.execute(ins, (username, password_hash))
+		account_id = cursor.fetchone()[0]
+		#conn.commit()
+
+		if account_type == 'person':
+			fname = request.form['firstname']
+			lname = request.form['lastname']
+			insertPerson = 'INSERT INTO person (account_id, fname, lname) VALUES (%s, %s, %s)'
+			cursor.execute(insertPerson, (account_id, fname, lname))
+			#conn.commit()
+		elif account_type == 'org':
+			title = request.form['title']
+			insertOrg = 'INSERT INTO organization (account_id, title) VALUES (%s, %s)'
+			cursor.execute(insertOrg, (account_id, title))
+			#conn.commit()
+		else:
+			raise ValueError('unknown account type')
+		
 		conn.commit()
+	except (IntegrityError, ValueError):
+		conn.rollback()
+		render_template('register.html', error="Registration failed, please try again")
+	finally:
 		cursor.close()
-		return render_template('index.html')
+
+	return render_template('index.html')
 
 @app.route('/home')
 def home():
@@ -107,7 +129,7 @@ def home():
             account_type = 'organization'
             org_id = row['org_id']
             cursor = conn.cursor(cursor_factory=RealDictCursor)
-            query = 'select * from organization where id = %s;'
+            query = 'select * from organization where org_id = %s;'
             cursor.execute(query, (org_id,))
             data = cursor.fetchone()
             cursor.close()
