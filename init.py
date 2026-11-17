@@ -139,7 +139,7 @@ def home():
 
 @app.route('/logout')
 def logout():
-	session.pop('username')
+	session.pop('username', None)
 	return redirect('/')
 		
 app.secret_key = 'some key that you will never guess'
