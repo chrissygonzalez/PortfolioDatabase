@@ -170,7 +170,7 @@ create table post_comment (
 	foreign key 	(responder_id) references person
 );
 
--- create type reaction_value as enum ('dislike', 'none', 'like');
+create type reaction_value as enum ('dislike', 'none', 'like');
 
 create table post_reaction (
 	post_id	int,
