@@ -1,12 +1,8 @@
-<html>
-<head>
-</head>
-<style>
-	.hidden {
-		display: none;
-	}
-</style>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
 	<h1>Register for an account</h1>
 <form action="/registerAuth" method="POST">
 	<input type="radio" id="register-person" name="account-type" value="person" checked onchange="toggleMessage(this.value)">
@@ -47,5 +43,4 @@
 	}
   }
 </script>
-</body>
-</html>
+{% endblock %}

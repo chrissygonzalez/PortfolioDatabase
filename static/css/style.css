@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+}
+
+header {
+    padding: 1em;
+    background-color: aqua;
+}
+
+.hidden {
+    display: none;
+}
+
+.active {
+    color: red;
+}

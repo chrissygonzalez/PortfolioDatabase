@@ -1,12 +1,12 @@
-<html>
-<head>
-</head>
-<body>
-<h1>Welcome {{username}} {{account_type}} {{data}}</h1>
+{% extends "base.html" %}
 
-<a href="/logout">Logout</a>
+{% block title %}Home{% endblock %}
 
-</body>
-
-
-</html>
+{% block content %}
+    <h1>Welcome {{username}} {{account_type}} {{data}}</h1>
+    {% if data is defined and data.prof_id is not none %}
+        <button>Edit Profile</button>
+    {% else %}
+        <button>Create Profile</button>
+    {% endif %}
+{% endblock %}
