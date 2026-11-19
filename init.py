@@ -82,19 +82,16 @@ def registerAuth():
 		ins = 'INSERT INTO account (username, password_hash) VALUES (%s, %s) RETURNING account_id'
 		cursor.execute(ins, (username, password_hash))
 		account_id = cursor.fetchone()[0]
-		#conn.commit()
 
 		if account_type == 'person':
 			fname = request.form['firstname']
 			lname = request.form['lastname']
 			insertPerson = 'INSERT INTO person (account_id, fname, lname) VALUES (%s, %s, %s)'
 			cursor.execute(insertPerson, (account_id, fname, lname))
-			#conn.commit()
 		elif account_type == 'org':
 			title = request.form['title']
 			insertOrg = 'INSERT INTO organization (account_id, title) VALUES (%s, %s)'
 			cursor.execute(insertOrg, (account_id, title))
-			#conn.commit()
 		else:
 			raise ValueError('unknown account type')
 		
@@ -105,11 +102,15 @@ def registerAuth():
 	finally:
 		cursor.close()
 
-	return render_template('index.html')
+	session['username'] = username 
+	return redirect(url_for('home'))
 
 @app.route('/home')
 def home():
-    username = session['username']
+    username = session.get('username')
+    if username is None:
+        return redirect(url_for('login'))
+
     cursor = conn.cursor(cursor_factory=RealDictCursor);
     query = 'select account.account_id, account.password_hash, person.id as person_id, organization.org_id from account left join person on person.account_id = account.account_id left join organization on organization.account_id = account.account_id where account.username = %s;'
     cursor.execute(query, (username,))
