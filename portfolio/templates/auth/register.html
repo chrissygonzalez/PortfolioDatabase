@@ -4,7 +4,7 @@
 
 {% block content %}
 	<h1>Register for an account</h1>
-<form action="/registerAuth" method="POST">
+<form action="{{ url_for('auth.register') }}" method="POST">
 	<input type="radio" id="register-person" name="account-type" value="person" checked onchange="toggleMessage(this.value)">
 	<label for="register-person">Person</label><br>
 
@@ -28,7 +28,7 @@
 		<p class="error"><strong>Error:</strong> {{error}}</p>
 	{% endif %}
 </form>
-<a href="/">Go back</a>
+<a href="{{ url_for('main.index') }}">Go back</a>
 
 <script>
 	const personForm = document.querySelector('.person');
