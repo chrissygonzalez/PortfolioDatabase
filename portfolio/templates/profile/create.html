@@ -6,7 +6,7 @@
 
     <h1>Create Your Profile</h1>
 
-    <form action="{{ url_for('createProfile') }}" method="POST">
+    <form action="{{ url_for('profile.create') }}" method="POST">
 
         <label for="tagline">Tagline</label>
 
@@ -26,6 +26,6 @@
 
     </form>
 
-    <a href="{{ url_for('home') }}">Cancel</a>
+    <a href="{{ url_for('main.home') }}">Cancel</a>
 
 {% endblock %}

@@ -7,7 +7,7 @@
     {% if data is defined and data.prof_id is not none %}
         <button>Edit Profile</button>
     {% else %}
-        <a href="{{ url_for('createProfile') }}">
+        <a href="{{ url_for('profile.create') }}">
             <button type="button">Create Profile</button>
         </a>
     {% endif %}
