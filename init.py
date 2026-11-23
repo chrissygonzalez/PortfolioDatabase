@@ -105,6 +105,96 @@ def registerAuth():
 	session['username'] = username 
 	return redirect(url_for('home'))
 
+@app.route('/createProfile', methods=['GET', 'POST'])
+def createProfile():
+    username = session.get('username')
+
+    if username is None:
+        return redirect(url_for('login'))
+
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        # Find out whether this account belongs to a person or organization
+        query = '''
+            SELECT
+                person.id AS person_id,
+                person.prof_id AS person_prof_id,
+                organization.org_id,
+                organization.prof_id AS org_prof_id
+            FROM account
+            LEFT JOIN person
+                ON person.account_id = account.account_id
+            LEFT JOIN organization
+                ON organization.account_id = account.account_id
+            WHERE account.username = %s
+        '''
+
+        cursor.execute(query, (username,))
+        account = cursor.fetchone()
+
+        if account is None:
+            return redirect(url_for('login'))
+
+        # Identify the account type and check for an existing profile
+        if account['person_id'] is not None:
+            account_type = 'person'
+            existing_prof_id = account['person_prof_id']
+            owner_id = account['person_id']
+        else:
+            account_type = 'organization'
+            existing_prof_id = account['org_prof_id']
+            owner_id = account['org_id']
+
+        # Don't create a second profile
+        if existing_prof_id is not None:
+            return redirect(url_for('home'))
+
+        if request.method == 'POST':
+            tagline = request.form.get('tagline', '').strip()
+
+            if len(tagline) > 100:
+                return render_template(
+                    'create_profile.html',
+                    error='Tagline must be 100 characters or fewer'
+                )
+
+            # Create the profile and get its generated ID
+            cursor.execute(
+                '''
+                INSERT INTO profile (tagline)
+                VALUES (%s)
+                RETURNING prof_id
+                ''',
+                (tagline,)
+            )
+
+            prof_id = cursor.fetchone()['prof_id']
+
+            # Connect the new profile to its owner
+            if account_type == 'person':
+                cursor.execute(
+                    'UPDATE person SET prof_id = %s WHERE id = %s',
+                    (prof_id, owner_id)
+                )
+            else:
+                cursor.execute(
+                    'UPDATE organization SET prof_id = %s WHERE org_id = %s',
+                    (prof_id, owner_id)
+                )
+
+            conn.commit()
+            return redirect(url_for('home'))
+
+        return render_template('create_profile.html')
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+
 @app.route('/home')
 def home():
     username = session.get('username')
