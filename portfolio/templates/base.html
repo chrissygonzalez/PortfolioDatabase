@@ -9,6 +9,7 @@
         Portfolio App
         {% if session.username %}
             <a href="{{ url_for('auth.logout') }}">Logout</a>
+            {# <a href="{{ url_for('auth.profiles')}}">Profiles</a> #}
         {% else %}
         	<a href="{{ url_for('auth.login') }}" class="{{ 'active' if request.endpoint == 'auth.login' else '' }}">Login</a>
             <a href="{{ url_for('auth.register') }}" class="{{ 'active' if request.endpoint == 'auth.register' else '' }}">Register</a>
