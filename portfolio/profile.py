@@ -133,6 +133,9 @@ def me():
             existing_prof_id = account['org_prof_id']
             # owner_id = account['org_id']
 
+        if existing_prof_id is None:
+            return redirect(url_for('main.home'))
+        
     except Exception:
         conn.rollback()
         raise
@@ -280,6 +283,32 @@ def view(prof_id):
 
         return render_template('profile/view.html', 
             profile=profile, tags=tags, contacts=contacts, addresses=addresses, projects=projects, membership=membership)
+
+    finally:
+        cursor.close()
+
+
+# all profiles
+@bp.route('/profiles', methods=['GET'])
+@login_required
+def all_profiles():
+    # username = session['username']
+    conn = get_db()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cursor.execute('SELECT * FROM person WHERE prof_id IS NOT NULL')
+        people_with_profiles = cursor.fetchall()
+        print(people_with_profiles)
+
+        cursor.execute('SELECT * FROM organization WHERE prof_id IS NOT NULL')
+        orgs_with_profiles = cursor.fetchall()
+        print(orgs_with_profiles)
+
+        return render_template('profile/all.html', people=people_with_profiles, orgs=orgs_with_profiles)
+
+    except Exception:
+        conn.rollback()
+        raise
 
     finally:
         cursor.close()

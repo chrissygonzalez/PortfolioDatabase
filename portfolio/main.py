@@ -44,6 +44,10 @@ def home():
         account_type = 'organization'
         cursor.execute('SELECT * FROM organization WHERE org_id = %s', (row['org_id'],))
     data = cursor.fetchone()
+
+    if data['prof_id'] is not None:
+        return redirect(url_for('profile.me'))
+
     cursor.close()
 
     return render_template('main/home.html', username=username, account_type=account_type, data=data)

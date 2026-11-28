@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}All Profiles{% endblock %}
+
+{% block content %}
+<h1>All Profiles</h1>
+<h2>People</h2>
+<ul>
+{% for p in people %}
+    <li>{{ p.fname }} {{ p.lname }} <a href="{{url_for('profile.view', prof_id=p.prof_id)}}">Profile</a></li>
+{% endfor %}
+</ul>
+
+<h2>Organizations</h2>
+<ul>
+{% for o in orgs %}
+    <li>{{ o.title }} <a href="{{url_for('profile.view', prof_id=o.prof_id)}}">Profile</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
