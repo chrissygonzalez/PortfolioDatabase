@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile.name }}{% endblock %}
+
+{% block content %}
+
+    {# ---------- header ---------- #}
+    <section class="profile-header">
+        <h1>{{ profile.name }}</h1>
+        <p class="profile-type">{{ profile.prof_type | capitalize }}</p>
+        {% if profile.tagline %}
+            <p class="tagline">{{ profile.tagline }}</p>
+        {% endif %}
+
+        {# TODO: only show if this is the logged-in user's own profile #}
+        {# <a href="#">Edit Profile</a> #}
+    </section>
+
+    {# ---------- tags ---------- #}
+    <section>
+        <h2>Tags</h2>
+        {% if tags %}
+            <ul class="tags">
+            {% for t in tags %}
+                <li>{{ t.content }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tags yet.</p>
+        {% endif %}
+    </section>
+
+    {# ---------- contact info ---------- #}
+    <section>
+        <h2>Contact</h2>
+        {% if contacts %}
+            <ul>
+            {% for c in contacts %}
+                <li>{{ c.contact_type | capitalize }}: {{ c.contact }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No contact info.</p>
+        {% endif %}
+    </section>
+
+    {# ---------- addresses ---------- #}
+    <section>
+        <h2>Addresses</h2>
+        {% if addresses %}
+            <ul>
+            {% for a in addresses %}
+                <li>{{ a.street_num }} {{ a.street_name }}, {{ a.city }}, {{ a.country }} {{ a.postal }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No addresses.</p>
+        {% endif %}
+    </section>
+
+    {# ---------- projects ---------- #}
+    <section>
+        <h2>Projects</h2>
+        {% if projects %}
+            {% for p in projects %}
+                <article>
+                    <h3>{{ p.title }}</h3>
+                    {% if p.descr %}<p>{{ p.descr }}</p>{% endif %}
+                </article>
+            {% endfor %}
+        {% else %}
+            <p>No projects yet.</p>
+        {% endif %}
+    </section>
+
+    {# ---------- membership ---------- #}
+    <section>
+        {# a person's profile lists orgs; an org's profile lists members #}
+        <h2>{{ 'Member of' if profile.prof_type == 'person' else 'Members' }}</h2>
+        {% if membership %}
+            <ul>
+            {% for m in membership %}
+                <li>
+                    <a href="{{ url_for('profile.view', prof_id=m.prof_id) }}">{{ m.name }}</a>
+                    ({{ m.roles }})
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>None.</p>
+        {% endif %}
+    </section>
+
+    {# ---------- following ? ---------- #}
+
+    <a href="{{ url_for('main.home') }}">Back</a>
+
+{% endblock %}
