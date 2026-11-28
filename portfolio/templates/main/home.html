@@ -3,7 +3,11 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <h1>Welcome {{username}} {{account_type}} {{data}}</h1>
+    <h1>Welcome {{username}}</h1>
+    <div>
+        <button>Add Address</button>
+        <button>Add Phone</button>
+    </div>
     {% if data is defined and data.prof_id is not none %}
         <button>Edit Profile</button>
     {% else %}

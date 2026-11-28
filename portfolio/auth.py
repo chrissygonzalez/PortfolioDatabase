@@ -36,7 +36,7 @@ def login():
 
     if data and check_password_hash(data['password_hash'], password):
         session['username'] = username
-        return redirect(url_for('main.home'))
+        return redirect(url_for('profile.me'))
 
     return render_template('auth/login.html', error='Invalid login or username')
 
